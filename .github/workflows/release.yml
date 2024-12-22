@@ -1,0 +1,38 @@
+name: Release
+permissions:
+  contents: write
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Build archive
+        run: |
+          cd source_bios
+          wget -q https://archive.org/download/pack-full-bios-batocera-v-41-minicaketv/PACK%20FULL%20BIOS%20BATOCERA%20V41-MINICAKETV.zip
+          unzip -q "PACK FULL BIOS BATOCERA V41-MINICAKETV.zip"
+          cd ..
+          python main.py --zip
+          rm -rf output
+          python main.py --zip --mmc
+
+      - name: Upload release asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.event.release.tag_name }} bios-mmc.zip bios-sdcard.zip
