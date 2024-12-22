@@ -1,0 +1,3 @@
+[submodule "source_bios/Batocera.PLUS-bios"]
+	path = source_bios/Batocera.PLUS-bios
+	url = git@github.com:BatoceraPLUS/Batocera.PLUS-bios.git
